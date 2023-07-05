@@ -11,7 +11,9 @@ export default function EventDetailPage(props) {
   const event = props.selectedEvent;
 
   if (!event) {
-    return <p>Loading data..</p>;
+    return (
+    <div className="center"><p>Loading data..</p></div>
+    );
   }
 
   return (
@@ -39,6 +41,7 @@ export async function getStaticProps(context) {
     props: {
       selectedEvent: event,
     },
+    revalidate: 30
   };
 }
 

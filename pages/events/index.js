@@ -1,11 +1,10 @@
 import EventList from "@/components/events/event-list";
-// import { getAllEvents } from "@/dummy-data";
+ //import { getAllEvents } from "@/dummy-data";
 import { getAllEvents } from "@/helpers/api-util";
 import EventsSearch from "@/components/events/events-search";
 import { useRouter } from "next/router";
 
-export default function AllEventsPage() {
-  const allEvents = getAllEvents();
+export default function AllEventsPage(props) {
   const router = useRouter();
 
   function findEventsHandler(year, month) {
@@ -16,7 +15,17 @@ export default function AllEventsPage() {
   return (
     <>
       <EventsSearch onSearch={findEventsHandler} />
-      <EventList items={allEvents} />
+      <EventList items={props.events} />
     </>
   );
+}
+
+export async function getStaticProps() {
+  const featuredEvents = await getAllEvents();
+  return {
+    props: {
+      events: featuredEvents
+    },
+    revalidate: 60
+  }
 }
