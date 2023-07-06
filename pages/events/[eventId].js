@@ -4,6 +4,7 @@ import EventSummary from "@/components/event-detail/event-summary";
 import { getEventById, getFeaturedEvents } from "@/helpers/api-util";
 // import { useRouter } from "next/router";
 import { Fragment } from "react";
+import Head from "next/head";
 
 export default function EventDetailPage(props) {
   // const router = useRouter();
@@ -12,12 +13,18 @@ export default function EventDetailPage(props) {
 
   if (!event) {
     return (
-    <div className="center"><p>Loading data..</p></div>
+      <div className="center">
+        <p>Loading data..</p>
+      </div>
     );
   }
 
   return (
     <Fragment>
+      <Head>
+        <title>{event.title}</title>
+        <meta name="description" content={event.description} />
+      </Head>
       <EventSummary title={event.title} />
       <EventLogistics
         date={event.date}
@@ -41,7 +48,7 @@ export async function getStaticProps(context) {
     props: {
       selectedEvent: event,
     },
-    revalidate: 30
+    revalidate: 30,
   };
 }
 
