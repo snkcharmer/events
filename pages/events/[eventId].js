@@ -5,7 +5,7 @@ import { getEventById, getFeaturedEvents } from "@/helpers/api-util";
 // import { useRouter } from "next/router";
 import { Fragment } from "react";
 import Head from "next/head";
-import NewComment from "@/components/input/comments";
+import Comment from "@/components/input/comments";
 export default function EventDetailPage(props) {
   // const router = useRouter();
   // const eventId = router.query.eventId;
@@ -34,8 +34,8 @@ export default function EventDetailPage(props) {
       />
       <EventContent>
         <p>{event.description}</p>
-        <NewComment />
       </EventContent>
+      <Comment eventId={event.id} />
     </Fragment>
   );
 }

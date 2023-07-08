@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 
 import CommentList from "./comment-list";
 import NewComment from "./new-comment";
@@ -8,34 +8,36 @@ function Comments(props) {
   const { eventId } = props;
 
   const [showComments, setShowComments] = useState(false);
-  const [commentItems, setCommentItems] = useState([]);
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    if (showComments) {
+      fetch('/api/comments/' + eventId)
+      .then((response) => response.json())
+      .then((data) => {
+        setComments(data.comments);
+      });
+    }
+  });
+
 
   function toggleCommentsHandler() {
     setShowComments((prevStatus) => !prevStatus);
-
-    fetch("/api/comment")
-      .then((response) => response.json())
-      .then((data) => setCommentItems(data));
   }
 
   function addCommentHandler(commentData) {
-    // send data to API
-    // console.log(commentData);
-    fetch("/api/comment", {
+    fetch("/api/comments/" + eventId, {
       method: "POST",
-      body: JSON.stringify({
-        id: commentData.id,
-        email: commentData.email,
-        name: commentData.name,
-        text: commentData.text,
-      }),
+      body: JSON.stringify(commentData),
       headers: {
         "Content-Type": "application/json",
       },
     })
       .then((response) => response.json())
-      .then((data) => commentItems(data));
+      .then((data) => setCommentItems([...commentItems, data]));
   }
+  
+  
 
   return (
     <section className={classes.comments}>
@@ -43,9 +45,20 @@ function Comments(props) {
         {showComments ? "Hide" : "Show"} Comments
       </button>
       {showComments && <NewComment onAddComment={addCommentHandler} />}
-      {showComments && <CommentList comments={commentItems} />}
+      {showComments && <CommentList items={comments} />}
     </section>
   );
+}
+
+
+export async function getStaticProps() {
+  const featuredEvents = await getAllEvents();
+  return {
+    props: {
+      events: featuredEvents,
+    },
+    revalidate: 60,
+  };
 }
 
 export default Comments;
