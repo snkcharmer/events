@@ -6,6 +6,7 @@ import { getEventById, getFeaturedEvents } from "@/helpers/api-util";
 import { Fragment } from "react";
 import Head from "next/head";
 import Comment from "@/components/input/comments";
+
 export default function EventDetailPage(props) {
   // const router = useRouter();
   // const eventId = router.query.eventId;
