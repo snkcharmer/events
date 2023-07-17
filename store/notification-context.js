@@ -3,7 +3,7 @@ import { createContext, useState } from "react";
 const NotificationContext = createContext({
   notification: null,
   showNotification: function (notificationData) {},
-  hideNotification: function (notificationData) {},
+  hideNotification: function () {},
 });
 
 export function NotificationContextProvider(props) {
@@ -20,11 +20,11 @@ export function NotificationContextProvider(props) {
   const context = {
     notification: activeNotification,
     showNotification: showNotificationHandler,
-    hideNotification: showNotificationHandler,
+    hideNotification: hideNotificationHandler,
   };
 
   return (
-    <NotificationContext.Provider>
+    <NotificationContext.Provider value={context}>
       {props.childern}
     </NotificationContext.Provider>
   );

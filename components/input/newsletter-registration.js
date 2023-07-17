@@ -1,21 +1,54 @@
-import { useRef } from 'react';
-import classes from './newsletter-registration.module.css';
+import { useContext, useRef } from "react";
+import classes from "./newsletter-registration.module.css";
+import NotificationContext from "@/store/notification-context";
 
 function NewsletterRegistration() {
   const emailInputRef = useRef();
+  const notificationCtx = useContext(NotificationContext);
 
   function registrationHandler(event) {
     event.preventDefault();
 
     const enteredEmail = emailInputRef.current.value; //Calls the ref value of email input below;
 
-    fetch('/api/newsletter', {
-    method: "POST",
-    body: JSON.stringify({ email: enteredEmail, }),
-    headers: { 'Content-Type': 'application/json' }
-  }).then((response) => response.json())
-  .then((data) => console.log(data))
+    notificationCtx.showNotification({
+      title: "Signing up...",
+      message: "Registering for newsletter",
+      status: "pending",
+    });
 
+    // Error of 400 and 500 will not make this fetch to fail. Thus, we create the "!important section"
+    fetch("/api/newsletter", {
+      method: "POST",
+      body: JSON.stringify({ email: enteredEmail }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        // Start "!important section"
+        if (response.ok) {
+          response.json();
+        }
+
+        response.json().then((data) => {
+          throw new Error(data.message || "Something went wrong!");
+        });
+
+        //End
+      })
+      .then((data) => {
+        notificationCtx.showNotification({
+          title: "Success!",
+          message: "Registered successfully.",
+          status: "success",
+        });
+      })
+      .catch((error) => {
+        notificationCtx.showNotification({
+          title: "Error!",
+          message: error.message || "Something went wrong.",
+          status: "error",
+        });
+      });
   }
 
   return (
@@ -24,10 +57,10 @@ function NewsletterRegistration() {
       <form onSubmit={registrationHandler}>
         <div className={classes.control}>
           <input
-            type='email'
-            id='email'
-            placeholder='Your email'
-            aria-label='Your email'
+            type="email"
+            id="email"
+            placeholder="Your email"
+            aria-label="Your email"
             ref={emailInputRef}
           />
           <button>Register</button>
