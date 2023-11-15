@@ -11,7 +11,7 @@ import Button from "@/components/ui/button";
 export default function FilteredEventPage() {
   const [loadedEvents, setLoadedEvents] = useState();
   const router = useRouter();
-
+  
   const filterData = router.query.slug;
 
   const { data, error } = useSWR(
